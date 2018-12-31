@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://code.jquery.com/jquery-git.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<title>템플릿 문법</title>
+</head>
+<body>
+	<!-- v-once 디렉티브는 데이터 변경시 업데이트 되지 않는다. -->
+	<span id="app" v-once>
+		<!-- 이중 중괄호는 해당 데이터 객체의 속성값으로 대체된다. -->
+		메시지: {{msg}}
+	</span>
+
+	<!-- 
+		{{}}는 일반 텍스트로 데이터를 해석하므로 
+		HTML출력을 위해 v-html디렉티브를 사용한다. 
+	-->
+	<p id="p1">이중괄호 사용 : {{rawHtml}}</p>
+	<p id="p2">v-html 디렉티브 사용 : <span v-html="rawHtml"></span></p>
+
+	<!-- attributes -->
+	<!-- 
+		{{}}로 attribute를 지정할 수 없다.
+		대신 v-bind 디렉티브를 사용한다.
+	 -->
+	<div v-bind:id="dynamicId"></div>
+
+	<!-- 
+		boolean 속성의 경우 null,undefined, false일때 
+		disabled 속성은 렌더링된 요소에 포함되지 않는다.
+		예) false 일때 : <button>Button</button>
+			true 일때 : <button disabled="disabled">Button</button>
+	-->
+	<button v-bind:disabled="isButtonDisabled">Button</button>
+
+	<!-- JavaScript Expressions -->
+	<!-- 
+		이 표현식들은 JavaScript로 계산된다. 
+		단, 하나의 단일 표현식만 쓸 수 있다.
+		틀린 예) {{ if (ok) { return message } }} 삼항연산자를 써야한다.
+	-->
+	<div id="app5" v-bind:id="'list-' + id">
+		{{ number + 1}} <br>
+
+		{{ ok ? 'YES' : 'NO' }} <br>
+
+		{{ message.split('').reverse().join('') }}
+	</div>
+
+	<!-- Directives -->
+	<!-- 디렉티브 속성 값은 단일 JavaScript 표현식이 된다. (v-for는 예외) -->
+	<!-- v-if 는 seen에 따라 요소를 제거 또는 삽입한다.(show(), hide() 가 아니다!) -->
+	<p id="app6" v-if="seen">이제 나를 볼 수 있어요</p>
+
+
+	<!-- 
+		일부 디렉티브들은 :으로 표시되는 인자를 받아 
+		HTML요소의 속성과 이벤트를 바인딩 합니다.
+	-->
+	<div id="app7">
+		<a v-bind:href="url">url</a> <br>
+		<a v-on:click="doSomething">click</a>
+	</div>
+
+	<!-- 
+		수식어는 점으로 표시되는 특수 접미사로, 디렉티브를 특별한 방법으로 바인딩 해야 함을 나타낸다. 예를 들어, .prevent 수식어는 트리거된 이벤트에서 event.preventDefault()를 호출하도록 v-on 디렉티브에게 알려준다. 
+	-->
+	<div id="app8">
+		<form v-on:submit.prevent="onSubmit"> ... </form>
+	</div>
+
+	<!-- 자주 사용되는 v-bind, v-on에는 특별한 약어가 제공된다. -->
+	<!-- 전체 문법 -->
+	<a v-bind:href="url"> ... </a>
+	<a v-on:click="doSomething"> ... </a>
+	<!-- 약어 -->
+	<a :href="url"> ... </a>
+	<a @click="doSomething"> ... </a>		
+
+	<script type="text/javascript">
+		var app = new Vue({
+			el:'#app',
+			data(){
+				return{msg : 'Hi!'}
+			}
+		});
+		
+		for (let i = 1; i <= 2; i++) {			
+			new Vue({
+				el:'#p'+i,
+				data(){
+					return{rawHtml:'<span style="color:red"> This should be red.<span/>'}
+				}
+			});
+		}
+
+		var app3 = new Vue({
+			el:'div',
+			data(){
+				return{dynamicId:'app3'}
+			}
+		});
+
+		var app4 = new Vue({
+			el:'button',
+			data(){
+				return{isButtonDisabled:'true'}
+			}
+		});
+
+		var app5 = new Vue({
+			el:'#app5',
+			data(){
+				return{
+					number:1,
+					ok:true,
+					message:'안녕하세요',
+					id:10
+				}
+			}
+		});
+
+		var app6 = new Vue({
+			el:'#app6',
+			data(){
+				return {seen:true}
+			}
+		});
+		
+		var app7 = new Vue({
+			el:'#app7',
+			data(){return{url:'https://www.naver.com'}},
+			methods:{
+				doSomething(){
+					console.log('click');
+				}
+			}
+		});
+	</script>
+</body>
+</html>
